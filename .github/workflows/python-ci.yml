@@ -1,0 +1,36 @@
+name: Python Code Quality
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          # Installing ruff for linting/formatting and pytest for tests
+          pip install ruff pytest
+
+      - name: Run Ruff Linter & Import Sorter
+        # Check for syntax errors, style issues, and unsorted imports
+        run: ruff check --output-format=github .
+
+      - name: Run Ruff Formatter check
+        # Ensure code is properly formatted
+        run: ruff format --check .
+
+      - name: Run Unit Tests
+        # Execute pytest
+        run: pytest
