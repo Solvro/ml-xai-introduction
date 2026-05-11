@@ -17,20 +17,22 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          # Installing ruff for linting/formatting and pytest for tests
-          pip install ruff pytest
+      - name: Install uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          enable-cache: true
+
+      - name: Sync dependencies
+        run: uv sync --all-extras
 
       - name: Run Ruff Linter & Import Sorter
         # Check for syntax errors, style issues, and unsorted imports
-        run: ruff check --output-format=github .
+        run: uv run ruff check --output-format=github .
 
       - name: Run Ruff Formatter check
         # Ensure code is properly formatted
-        run: ruff format --check .
+        run: uv run ruff format --check .
 
       - name: Run Unit Tests
-        # Execute pytest
-        run: pytest
+        # Execute pytest in virtual environment managed by uv
+        run: uv run pytest
