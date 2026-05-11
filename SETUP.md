@@ -173,6 +173,18 @@ Defines which code quality checks run before each commit:
 - `ruff` - linting and import sorting
 - `ruff-format` - code formatting
 
+Note about Ruff configuration:
+
+- The project's `ruff` settings are stored in `pyproject.toml` under `[tool.ruff]` and `[tool.ruff.lint]` so both local runs and CI use the same rules.
+- Current key settings: `line-length = 120`, `preview = true`, and `select = ["E","F","I","N","W","UP","B","ANN"]`.
+- The `ruff` pre-commit hook reads `pyproject.toml` automatically; avoid duplicating rule arguments in the hook. If you prefer automatic fixes on commit, you can re-enable `--fix` in the hook, but CI is configured to run checks and fail so fixes are applied locally and committed separately.
+
+Note on dev dependencies and tools:
+
+- This project uses `ruff` as the primary linter and import-sorter. We've removed `isort` and `flake8` from the dev dependency group because `ruff` provides equivalent linting and import-sorting functionality.
+- `black` is kept as an optional canonical formatter; you can keep `black` and run it alongside `ruff-format` if you prefer Black's exact formatting rules. Alternatively, rely on `ruff-format` for a single-tool formatting flow.
+- Local installs include `ruff` in the dev dependencies so `uv run ruff` works the same as the `ruff` pre-commit hooks.
+
 ---
 
 ## How Import Discovery Works
