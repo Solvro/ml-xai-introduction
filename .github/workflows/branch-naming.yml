@@ -14,7 +14,7 @@ jobs:
           BRANCH_NAME="${{ github.head_ref }}"
           # Regex allows specific prefixes, followed by anything (.*)
           REGEX="^(feat|fix|docs|chore|refactor|test|ci)/.*$"
-          
+
           if [[ ! $BRANCH_NAME =~ $REGEX ]]; then
             echo "ERROR: Branch name '$BRANCH_NAME' is invalid!"
             echo "It must start with one of: feat/, fix/, docs/, chore/, refactor/, test/, ci/"
