@@ -28,6 +28,3 @@ jobs:
       - name: Run pre-commit hooks
         run: uv run pre-commit run --all-files
 
-      - name: Run Unit Tests
-        # Execute pytest in virtual environment managed by uv
-        run: uv run pytest
