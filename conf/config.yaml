@@ -1,0 +1,8 @@
+defaults:
+  - hydra: default
+  - paths: default
+  - logging: default
+  - model: default
+  - data: mnist
+
+  - _self_

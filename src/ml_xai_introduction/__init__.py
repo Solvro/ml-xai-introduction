@@ -1,2 +1,1 @@
-def main() -> None:
-    print("Hello from ml-xai-introduction!")
+"""ml_xai_introduction package."""

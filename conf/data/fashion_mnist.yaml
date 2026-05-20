@@ -1,0 +1,8 @@
+name: fashion_mnist
+root: ${paths.data_dir}/fashion_mnist
+batch_size: 64
+num_workers: 0
+pin_memory: false
+download: true
+normalize: true
+shuffle_train: true

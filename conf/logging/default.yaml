@@ -1,0 +1,3 @@
+use_wandb: false
+project_name: "ml-xai-introduction"
+experiment_name: "default"
