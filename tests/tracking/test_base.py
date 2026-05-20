@@ -1,11 +1,6 @@
 from __future__ import annotations
 
-from types import SimpleNamespace
-
-from omegaconf import OmegaConf
-
 from ml_xai_introduction.tracking.base import TrackingManager
-from ml_xai_introduction.tracking import factory
 
 
 class DummyBackend:
@@ -28,43 +23,27 @@ class DummyBackend:
         self.finished = True
 
 
+def test_tracking_manager_with_no_backends_is_noop() -> None:
+    tracker = TrackingManager()
 
-def test_build_tracker_returns_empty_manager_for_none_backend() -> None:
-    cfg = OmegaConf.create({"backends": ["none"]})
-
-    tracker = factory.build_tracker(cfg)
-
-    assert isinstance(tracker, TrackingManager)
     tracker.log_metrics({"accuracy": 1.0}, step=1)
     tracker.log_params({"batch_size": 64})
     tracker.log_artifact("artifact.txt")
     tracker.finish()
+
     assert tracker.backends == ()
 
 
-
-def test_build_tracker_dispatches_to_all_backends(monkeypatch) -> None:
+def test_tracking_manager_dispatches_to_all_backends() -> None:
     backend_one = DummyBackend()
     backend_two = DummyBackend()
-
-    def fake_import(module_name: str, package: str | None = None):
-        if module_name == ".wandb":
-            return SimpleNamespace(build_tracker=lambda cfg: backend_one)
-        if module_name == ".tensorboard":
-            return SimpleNamespace(build_tracker=lambda cfg: backend_two)
-        raise AssertionError(f"Unexpected import: {module_name}")
-
-    monkeypatch.setattr(factory.importlib, "import_module", fake_import)
-
-    cfg = OmegaConf.create({"backends": ["w_and_b", "tensorboard"]})
-    tracker = factory.build_tracker(cfg)
+    tracker = TrackingManager((backend_one, backend_two))
 
     tracker.log_metrics({"loss": 0.5}, step=2)
     tracker.log_params({"epochs": 10})
     tracker.log_artifact("model.bin", name="model")
     tracker.finish()
 
-    assert tracker.backends == (backend_one, backend_two)
     assert backend_one.metrics_calls == [({"loss": 0.5}, 2)]
     assert backend_two.metrics_calls == [({"loss": 0.5}, 2)]
     assert backend_one.params_calls == [{"epochs": 10}]

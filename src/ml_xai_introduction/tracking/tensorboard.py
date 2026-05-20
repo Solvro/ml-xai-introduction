@@ -9,7 +9,7 @@ from typing import Any
 from omegaconf import DictConfig
 
 
-def _require_tensorboard_writer():
+def _require_tensorboard_writer() -> type[Any]:
     try:
         from torch.utils.tensorboard import SummaryWriter
     except ModuleNotFoundError as exc:  # pragma: no cover - optional dependency
@@ -29,10 +29,18 @@ class TensorBoardTracker:
 
     def log_metrics(self, metrics: dict[str, Any], step: int | None = None) -> None:
         for key, value in metrics.items():
-            if isinstance(value, (int, float)):
-                self._writer.add_scalar(key, value, global_step=0 if step is None else step)
+            if isinstance(value, int | float):
+                self._writer.add_scalar(
+                    key,
+                    value,
+                    global_step=0 if step is None else step,
+                )
             else:
-                self._writer.add_text(key, json.dumps(value, sort_keys=True, default=str), global_step=0 if step is None else step)
+                self._writer.add_text(
+                    key,
+                    json.dumps(value, sort_keys=True, default=str),
+                    global_step=0 if step is None else step,
+                )
 
     def log_params(self, params: dict[str, Any]) -> None:
         self._writer.add_text("params/config", json.dumps(params, indent=2, sort_keys=True, default=str))

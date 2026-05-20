@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import importlib
-from typing import Any
+from collections.abc import Sequence
 
 from omegaconf import DictConfig
 
@@ -19,7 +19,7 @@ _BACKEND_MODULES = {
 _SKIP_BACKENDS = {"", "none", "null", "disabled"}
 
 
-def _normalize_backend_names(raw_backends: Any) -> list[str]:
+def _normalize_backend_names(raw_backends: Sequence[object] | str | None) -> list[str]:
     if raw_backends is None:
         return []
 

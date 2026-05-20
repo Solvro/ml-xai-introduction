@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
+from types import ModuleType
 from typing import Any
 
 from omegaconf import DictConfig
 
 
-def _require_mlflow():
+def _require_mlflow() -> ModuleType:
     try:
         import mlflow
     except ModuleNotFoundError as exc:  # pragma: no cover - optional dependency
@@ -24,7 +25,7 @@ def _flatten_params(params: dict[str, Any], prefix: str = "") -> dict[str, Any]:
         flat_key = f"{prefix}.{key}" if prefix else key
         if isinstance(value, dict):
             flattened.update(_flatten_params(value, prefix=flat_key))
-        elif isinstance(value, (list, tuple, set)):
+        elif isinstance(value, list | tuple | set):
             flattened[flat_key] = json.dumps(list(value), default=str)
         else:
             flattened[flat_key] = value

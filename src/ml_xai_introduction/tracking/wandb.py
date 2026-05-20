@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from dataclasses import dataclass, field
+from pathlib import Path
+from types import ModuleType
 from typing import Any
 
 from omegaconf import DictConfig, OmegaConf
 
 
-def _require_wandb():
+def _require_wandb() -> ModuleType:
     try:
         import wandb
     except ModuleNotFoundError as exc:  # pragma: no cover - optional dependency
