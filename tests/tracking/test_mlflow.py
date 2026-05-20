@@ -44,13 +44,11 @@ def test_mlflow_tracker_calls_expected_api(monkeypatch, tmp_path: Path) -> None:
     fake_mlflow = FakeMLflow()
     monkeypatch.setattr(mlflow_tracker, "_require_mlflow", lambda: fake_mlflow)
 
-    cfg = OmegaConf.create(
-        {
-            "project_name": "ml-xai-introduction",
-            "experiment_name": "mnist-baseline",
-            "mlflow": {"tracking_uri": "file:///tmp/mlruns", "nested": True, "tags": {}},
-        }
-    )
+    cfg = OmegaConf.create({
+        "project_name": "ml-xai-introduction",
+        "experiment_name": "mnist-baseline",
+        "mlflow": {"tracking_uri": "file:///tmp/mlruns", "nested": True, "tags": {}},
+    })
 
     tracker = mlflow_tracker.build_tracker(cfg)
     tracker.log_metrics({"accuracy": 0.9}, step=4)

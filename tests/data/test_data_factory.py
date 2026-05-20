@@ -17,20 +17,18 @@ def test_dataset_factory_dispatches_to_mnist(monkeypatch, tmp_path: Path) -> Non
 
     monkeypatch.setattr(data_factory, "get_mnist_loaders", fake_mnist_loaders)
 
-    cfg = OmegaConf.create(
-        {
-            "data": {
-                "name": "mnist",
-                "root": str(tmp_path / "mnist"),
-                "batch_size": 16,
-                "download": True,
-                "normalize": False,
-                "num_workers": 2,
-                "pin_memory": True,
-                "shuffle_train": False,
-            }
+    cfg = OmegaConf.create({
+        "data": {
+            "name": "mnist",
+            "root": str(tmp_path / "mnist"),
+            "batch_size": 16,
+            "download": True,
+            "normalize": False,
+            "num_workers": 2,
+            "pin_memory": True,
+            "shuffle_train": False,
         }
-    )
+    })
 
     assert data_factory.dataset(cfg) == ("train", "test")
     assert calls == [
@@ -55,20 +53,18 @@ def test_dataset_factory_dispatches_to_fashion_mnist(monkeypatch, tmp_path: Path
 
     monkeypatch.setattr(data_factory, "get_fashion_mnist_loaders", fake_fashion_loaders)
 
-    cfg = OmegaConf.create(
-        {
-            "data": {
-                "name": "fashion-mnist",
-                "root": str(tmp_path / "fashion_mnist"),
-                "batch_size": 32,
-                "download": False,
-                "normalize": True,
-                "num_workers": 0,
-                "pin_memory": False,
-                "shuffle_train": True,
-            }
+    cfg = OmegaConf.create({
+        "data": {
+            "name": "fashion-mnist",
+            "root": str(tmp_path / "fashion_mnist"),
+            "batch_size": 32,
+            "download": False,
+            "normalize": True,
+            "num_workers": 0,
+            "pin_memory": False,
+            "shuffle_train": True,
         }
-    )
+    })
 
     assert data_factory.dataset(cfg) == ("fashion-train", "fashion-test")
     assert calls == [

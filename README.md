@@ -74,3 +74,26 @@ The tracking layer uses one small factory plus backend adapters in `src/ml_xai_i
 - `logging=tensorboard` → TensorBoard
 
 The public API is intentionally small: `log_params()`, `log_metrics()`, `log_artifact()`, and `finish()`.
+
+## Quality And Coverage
+
+The repository uses `pytest` for tests, `pytest-cov` for coverage reporting, and `ruff` for linting plus formatting.
+
+Useful commands:
+
+```bash
+uv run pytest -q
+uv run pytest --cov=src/ml_xai_introduction --cov-report=term-missing
+uv run pytest --cov=src/ml_xai_introduction --cov-report=html
+uv run ruff check .
+uv run ruff format .
+uv run pre-commit run --all-files
+```
+
+Current test coverage focuses on:
+
+- dataset helpers for MNIST and FashionMNIST,
+- the dataset factory dispatch layer,
+- tracking manager dispatch,
+- dynamic tracker factory resolution,
+- backend adapters for `wandb`, `mlflow`, and `tensorboard`.

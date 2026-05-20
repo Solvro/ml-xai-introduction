@@ -22,9 +22,7 @@ class FakeMNIST(TinyDataset):
     init_calls: list[dict[str, object]] = []
 
     def __init__(self, root: str | Path, train: bool, download: bool, transform=None) -> None:
-        FakeMNIST.init_calls.append(
-            {"root": Path(root), "train": train, "download": download, "transform": transform}
-        )
+        FakeMNIST.init_calls.append({"root": Path(root), "train": train, "download": download, "transform": transform})
         self.transform = transform
 
 

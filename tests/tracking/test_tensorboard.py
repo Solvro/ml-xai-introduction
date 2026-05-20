@@ -31,11 +31,9 @@ class FakeSummaryWriter:
 def test_tensorboard_tracker_calls_expected_api(monkeypatch) -> None:
     monkeypatch.setattr(tensorboard_tracker, "_require_tensorboard_writer", lambda: FakeSummaryWriter)
 
-    cfg = OmegaConf.create(
-        {
-            "tensorboard": {"log_dir": "outputs/test/tensorboard"},
-        }
-    )
+    cfg = OmegaConf.create({
+        "tensorboard": {"log_dir": "outputs/test/tensorboard"},
+    })
 
     tracker = tensorboard_tracker.build_tracker(cfg)
     tracker.log_metrics({"loss": 0.15, "notes": {"status": "ok"}}, step=5)

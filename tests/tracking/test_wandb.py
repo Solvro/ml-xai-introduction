@@ -44,13 +44,11 @@ def test_wandb_tracker_calls_expected_api(monkeypatch, tmp_path: Path) -> None:
     fake_wandb = SimpleNamespace(init=lambda **kwargs: fake_run, Artifact=FakeArtifact)
     monkeypatch.setattr(wandb_tracker, "_require_wandb", lambda: fake_wandb)
 
-    cfg = OmegaConf.create(
-        {
-            "project_name": "ml-xai-introduction",
-            "experiment_name": "mnist-baseline",
-            "wandb": {"mode": "offline", "entity": "demo", "tags": ["mnist"], "notes": "note"},
-        }
-    )
+    cfg = OmegaConf.create({
+        "project_name": "ml-xai-introduction",
+        "experiment_name": "mnist-baseline",
+        "wandb": {"mode": "offline", "entity": "demo", "tags": ["mnist"], "notes": "note"},
+    })
 
     tracker = wandb_tracker.build_tracker(cfg)
     tracker.log_metrics({"loss": 0.25}, step=3)

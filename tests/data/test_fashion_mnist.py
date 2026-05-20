@@ -21,9 +21,12 @@ class FakeFashionMNIST(TinyDataset):
     init_calls: list[dict[str, object]] = []
 
     def __init__(self, root: str | Path, train: bool, download: bool, transform=None) -> None:
-        FakeFashionMNIST.init_calls.append(
-            {"root": Path(root), "train": train, "download": download, "transform": transform}
-        )
+        FakeFashionMNIST.init_calls.append({
+            "root": Path(root),
+            "train": train,
+            "download": download,
+            "transform": transform,
+        })
         self.transform = transform
 
 
@@ -51,9 +54,7 @@ def test_fashion_mnist_ensure_downloads_when_missing(monkeypatch, tmp_fashion_mn
 
 
 def test_get_fashion_mnist_loaders_returns_batched_tensors(monkeypatch, tmp_fashion_mnist_root: Path) -> None:
-    monkeypatch.setattr(
-        fashion_mnist, "get_fashion_mnist_datasets", lambda **kwargs: (TinyDataset(), TinyDataset())
-    )
+    monkeypatch.setattr(fashion_mnist, "get_fashion_mnist_datasets", lambda **kwargs: (TinyDataset(), TinyDataset()))
 
     train_loader, test_loader = fashion_mnist.get_fashion_mnist_loaders(
         root=tmp_fashion_mnist_root, batch_size=2, download=False
