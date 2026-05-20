@@ -1,3 +1,15 @@
-use_wandb: false
 project_name: "ml-xai-introduction"
 experiment_name: "default"
+backends:
+  - wandb
+wandb:
+  mode: online
+  entity: null
+  tags: []
+  notes: null
+mlflow:
+  tracking_uri: null
+  nested: false
+  tags: {}
+tensorboard:
+  log_dir: ${paths.output_dir}/tensorboard

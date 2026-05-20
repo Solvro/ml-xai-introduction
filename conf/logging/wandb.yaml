@@ -1,7 +1,7 @@
 project_name: "ml-xai-introduction"
 experiment_name: "default"
 backends:
-  - none
+  - wandb
 wandb:
   mode: online
   entity: null
