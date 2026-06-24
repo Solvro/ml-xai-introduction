@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Protocol
+
+from omegaconf import DictConfig
 
 
 class TrackingBackend(Protocol):
@@ -21,6 +23,9 @@ class TrackingBackend(Protocol):
 
     def finish(self) -> None:
         """Flush and close the backend."""
+
+
+BuildTrackerFn = Callable[[DictConfig], TrackingBackend]
 
 
 @dataclass(slots=True)

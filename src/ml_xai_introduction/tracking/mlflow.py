@@ -9,6 +9,8 @@ from typing import Any
 
 from omegaconf import DictConfig
 
+from ml_xai_introduction.tracking.tracking_factory import tracking_registry
+
 
 def _require_mlflow() -> ModuleType:
     try:
@@ -63,5 +65,6 @@ class MLflowTracker:
         mlflow.end_run()
 
 
+@tracking_registry.register("mlflow")
 def build_tracker(cfg: DictConfig) -> MLflowTracker:
     return MLflowTracker(cfg=cfg)

@@ -6,82 +6,64 @@ import pytest
 from omegaconf import OmegaConf
 
 from ml_xai_introduction.data import data_factory
+from ml_xai_introduction.data.data_base import DataBundle
 
 
-def test_dataset_factory_dispatches_to_mnist(monkeypatch, tmp_path: Path) -> None:
-    calls: list[dict[str, object]] = []
-
-    def fake_mnist_loaders(**kwargs):
-        calls.append(kwargs)
-        return "train", "test"
-
-    monkeypatch.setattr(data_factory, "get_mnist_loaders", fake_mnist_loaders)
-
-    cfg = OmegaConf.create({
+def _minimal_cfg(dataset_name: str, tmp_path: Path) -> object:
+    return OmegaConf.create({
         "data": {
-            "name": "mnist",
-            "root": str(tmp_path / "mnist"),
-            "batch_size": 16,
-            "download": True,
-            "normalize": False,
-            "num_workers": 2,
-            "pin_memory": True,
-            "shuffle_train": False,
-        }
-    })
-
-    assert data_factory.dataset(cfg) == ("train", "test")
-    assert calls == [
-        {
-            "root": str(tmp_path / "mnist"),
-            "batch_size": 16,
-            "download": True,
-            "normalize": False,
-            "num_workers": 2,
-            "pin_memory": True,
-            "shuffle_train": False,
-        }
-    ]
-
-
-def test_dataset_factory_dispatches_to_fashion_mnist(monkeypatch, tmp_path: Path) -> None:
-    calls: list[dict[str, object]] = []
-
-    def fake_fashion_loaders(**kwargs):
-        calls.append(kwargs)
-        return "fashion-train", "fashion-test"
-
-    monkeypatch.setattr(data_factory, "get_fashion_mnist_loaders", fake_fashion_loaders)
-
-    cfg = OmegaConf.create({
-        "data": {
-            "name": "fashion-mnist",
-            "root": str(tmp_path / "fashion_mnist"),
-            "batch_size": 32,
+            "name": dataset_name,
+            "root": str(tmp_path / dataset_name),
+            "num_classes": 10,
+            "val_size": 2,
             "download": False,
             "normalize": True,
             "num_workers": 0,
             "pin_memory": False,
-            "shuffle_train": True,
-        }
+        },
+        "training": {
+            "seed": 42,
+            "batch_size": 2,
+            "shuffle": False,
+        },
     })
 
-    assert data_factory.dataset(cfg) == ("fashion-train", "fashion-test")
-    assert calls == [
-        {
-            "root": str(tmp_path / "fashion_mnist"),
-            "batch_size": 32,
-            "download": False,
-            "normalize": True,
-            "num_workers": 0,
-            "pin_memory": False,
-            "shuffle_train": True,
-        }
-    ]
+
+def test_load_data_dispatches_to_registered_builder(monkeypatch, tmp_path: Path) -> None:
+    calls: list[object] = []
+
+    def fake_builder(cfg: object) -> DataBundle:
+        calls.append(cfg)
+        return DataBundle(train="train", val="val", test="test")  # type: ignore[arg-type]
+
+    monkeypatch.setattr(data_factory, "_DISCOVERED", True)
+    monkeypatch.setitem(data_factory.dataset_registry._entries, "mnist", fake_builder)
+
+    cfg = _minimal_cfg("mnist", tmp_path)
+    bundle = data_factory.load_data(cfg)
+    assert bundle.train == "train"
+    assert bundle.val == "val"
+    assert bundle.test == "test"
+    assert calls == [cfg]
 
 
-def test_dataset_factory_rejects_unknown_dataset() -> None:
-    cfg = OmegaConf.create({"data": {"name": "cifar10"}})
+def test_load_data_normalizes_dataset_name(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(data_factory, "_DISCOVERED", True)
+    monkeypatch.setitem(
+        data_factory.dataset_registry._entries,
+        "fashion_mnist",
+        lambda cfg: DataBundle(train="t", val="v", test="te"),  # type: ignore[arg-type]
+    )
 
-    with pytest.raises(ValueError, match="Unsupported dataset"):
-        data_factory.dataset(cfg)
+    cfg = _minimal_cfg("fashion-mnist", tmp_path)
+    bundle = data_factory.load_data(cfg)
+    assert bundle.train == "t"
+    assert bundle.val == "v"
+    assert bundle.test == "te"
+
+
+def test_load_data_rejects_unknown_dataset(tmp_path: Path) -> None:
+    cfg = _minimal_cfg("unknown_dataset", tmp_path)
+
+    with pytest.raises(ValueError, match="Unknown dataset"):
+        data_factory.load_data(cfg)

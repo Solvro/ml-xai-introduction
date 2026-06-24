@@ -1,5 +1,5 @@
-project_name: "ml-xai-introduction"
-experiment_name: "default"
+project_name: "ml-classifier-template"
+experiment_name: "baseline"
 backends:
   - none
 wandb:

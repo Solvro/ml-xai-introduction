@@ -9,6 +9,8 @@ from typing import Any
 
 from omegaconf import DictConfig, OmegaConf
 
+from ml_xai_introduction.tracking.tracking_factory import tracking_registry
+
 
 def _require_wandb() -> ModuleType:
     try:
@@ -52,5 +54,6 @@ class WandbTracker:
         self._run.finish()
 
 
+@tracking_registry.register("wandb", "w_and_b")
 def build_tracker(cfg: DictConfig) -> WandbTracker:
     return WandbTracker(cfg=cfg)

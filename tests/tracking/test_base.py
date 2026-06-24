@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ml_xai_introduction.tracking.base import TrackingManager
+from ml_xai_introduction.tracking.tracking_base import TrackingManager
 
 
 class DummyBackend:

@@ -8,6 +8,8 @@ from typing import Any
 
 from omegaconf import DictConfig
 
+from ml_xai_introduction.tracking.tracking_factory import tracking_registry
+
 
 def _require_tensorboard_writer() -> type[Any]:
     try:
@@ -54,5 +56,6 @@ class TensorBoardTracker:
         self._writer.close()
 
 
+@tracking_registry.register("tensorboard")
 def build_tracker(cfg: DictConfig) -> TensorBoardTracker:
     return TensorBoardTracker(cfg=cfg)

@@ -1,15 +1,16 @@
-"""MNIST dataset helpers backed by torchvision.
-
-The loader checks whether the raw MNIST files already exist in the target
-directory and downloads them only when they are missing.
-"""
+"""MNIST dataset helpers backed by torchvision."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
-from torch.utils.data import DataLoader
+import torch
+from omegaconf import DictConfig
+from torch.utils.data import DataLoader, Subset, random_split
 from torchvision import datasets, transforms
+
+from ml_xai_introduction.data.data_base import DataBundle
+from ml_xai_introduction.data.data_factory import dataset_registry
 
 MNIST_DEFAULT_ROOT = Path("data") / "mnist"
 MNIST_RAW_FILES = (
@@ -42,8 +43,6 @@ def _ensure_mnist_available(root: Path) -> None:
         return
 
     print(f"MNIST dataset not found at {root}; downloading to that location.")
-    # Instantiating the dataset with download=True triggers torchvision's
-    # built-in MNIST download path.
     datasets.MNIST(root=root, train=True, download=True)
     print(f"MNIST dataset downloaded to {root}.")
 
@@ -92,3 +91,44 @@ def get_mnist_loaders(
         pin_memory=pin_memory,
     )
     return train_loader, test_loader
+
+
+def _create_generator(seed: int | None) -> torch.Generator | None:
+    return torch.Generator().manual_seed(seed) if seed is not None else None
+
+
+def _split_train_val(
+    train_dataset: datasets.MNIST,
+    val_size: int,
+    generator: torch.Generator | None,
+) -> tuple[Subset, Subset]:
+    train_set_size = len(train_dataset) - val_size
+    return random_split(train_dataset, [train_set_size, val_size], generator=generator)
+
+
+@dataset_registry.register("mnist")
+def build_mnist(cfg: DictConfig) -> DataBundle:
+    root = Path(cfg.data.root)
+    if bool(cfg.data.download):
+        _ensure_mnist_available(root)
+
+    generator = _create_generator(cfg.training.seed if cfg.training.seed is not None else None)
+    transform = _build_transform(normalize=bool(cfg.data.normalize))
+    train_dataset = datasets.MNIST(root=root, train=True, download=False, transform=transform)
+    test_dataset = datasets.MNIST(root=root, train=False, download=False, transform=transform)
+    train_subset, val_subset = _split_train_val(train_dataset, int(cfg.data.val_size), generator)
+
+    loader_kwargs = {
+        "batch_size": int(cfg.training.batch_size),
+        "num_workers": int(cfg.data.num_workers),
+        "pin_memory": bool(cfg.data.pin_memory),
+    }
+    train_loader = DataLoader(
+        train_subset,
+        shuffle=bool(cfg.training.shuffle),
+        generator=generator,
+        **loader_kwargs,
+    )
+    val_loader = DataLoader(val_subset, shuffle=False, **loader_kwargs)
+    test_loader = DataLoader(test_dataset, shuffle=False, **loader_kwargs)
+    return DataBundle(train=train_loader, val=val_loader, test=test_loader)

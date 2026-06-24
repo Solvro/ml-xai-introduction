@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from types import SimpleNamespace
-
 import pytest
 from omegaconf import OmegaConf
 
-from ml_xai_introduction.tracking import factory
-from ml_xai_introduction.tracking.base import TrackingManager
+from ml_xai_introduction.tracking import tracking_factory as factory
+from ml_xai_introduction.tracking.tracking_base import TrackingManager
 
 
 class DummyBackend:
@@ -38,18 +36,22 @@ def test_build_tracker_returns_empty_manager_for_none_backend() -> None:
     assert tracker.backends == ()
 
 
-def test_build_tracker_dispatches_to_all_backends(monkeypatch) -> None:
+def test_build_tracker_dispatches_via_registry(monkeypatch) -> None:
     backend_one = DummyBackend()
     backend_two = DummyBackend()
 
-    def fake_import(module_name: str, package: str | None = None):
-        if module_name == ".wandb":
-            return SimpleNamespace(build_tracker=lambda cfg: backend_one)
-        if module_name == ".tensorboard":
-            return SimpleNamespace(build_tracker=lambda cfg: backend_two)
-        raise AssertionError(f"Unexpected import: {module_name}")
+    monkeypatch.setattr(factory, "_DISCOVERED", True)
 
-    monkeypatch.setattr(factory.importlib, "import_module", fake_import)
+    def wandb_builder(cfg: object) -> DummyBackend:
+        return backend_one
+
+    monkeypatch.setitem(factory.tracking_registry._entries, "wandb", wandb_builder)
+    monkeypatch.setitem(factory.tracking_registry._entries, "w_and_b", wandb_builder)
+    monkeypatch.setitem(
+        factory.tracking_registry._entries,
+        "tensorboard",
+        lambda cfg: backend_two,
+    )
 
     cfg = OmegaConf.create({"backends": ["w_and_b", "tensorboard"]})
     tracker = factory.build_tracker(cfg)
@@ -73,5 +75,5 @@ def test_build_tracker_dispatches_to_all_backends(monkeypatch) -> None:
 def test_build_tracker_rejects_unknown_backend() -> None:
     cfg = OmegaConf.create({"backends": ["something-else"]})
 
-    with pytest.raises(ValueError, match="Unsupported tracking backend"):
+    with pytest.raises(ValueError, match="Unknown tracking backend"):
         factory.build_tracker(cfg)

@@ -1,3 +1,4 @@
 data_dir: data
-output_dir: outputs/${logging.experiment_name}
+job_name: train
+output_dir: outputs/${paths.job_name}/${logging.experiment_name}/${now:%Y-%m-%d_%H:%M}
 checkpoint_dir: ${paths.output_dir}/checkpoints

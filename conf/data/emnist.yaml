@@ -1,0 +1,8 @@
+name: emnist
+num_classes: 47
+val_size: 10000
+root: ${paths.data_dir}/emnist
+download: true
+normalize: true
+num_workers: 0
+pin_memory: false

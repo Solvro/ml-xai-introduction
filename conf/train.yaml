@@ -2,7 +2,10 @@ defaults:
   - hydra: default
   - paths: default
   - logging: default
-  - model: default
+  - training: default
+  - loss: default
+  - metrics: default
+  - model: cnn
   - data: mnist
 
   - _self_
