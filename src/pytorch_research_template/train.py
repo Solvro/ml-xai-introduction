@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import Any, cast
 
 import torch
 from dotenv import load_dotenv
@@ -63,7 +64,7 @@ def main() -> None:
     Path(cfg.paths.output_dir).mkdir(parents=True, exist_ok=True)
 
     try:
-        tracker.log_params(OmegaConf.to_container(cfg, resolve=True))
+        tracker.log_params(cast(dict[str, Any], OmegaConf.to_container(cfg, resolve=True)))
 
         data = load_data(cfg)
         train_loader = data.train

@@ -223,8 +223,8 @@ def update_pyproject(path: Path, config: BootstrapConfig, dry_run: bool) -> None
     text = re.sub(r'^name = ".*"$', f'name = "{config.kebab}"', text, count=1, flags=re.M)
     text = re.sub(r'^description = ".*"$', f'description = "{config.description}"', text, count=1, flags=re.M)
     text = re.sub(
-        r"(\[project\.scripts\]\n)[^\n]+ = .*$",
-        rf'\1{config.kebab} = "{config.package}.train:main"',
+        r'(\[project\.scripts\]\n)\S+ = "[^"]+\.train:main"',
+        rf'\1train = "{config.package}.train:main"',
         text,
         count=1,
         flags=re.M,
