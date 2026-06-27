@@ -1,6 +1,6 @@
 # Backlog — ML template improvements (Hydra + registry)
 
-Ideas for template extensibility: factory, registry, metrics, config, tracking.  
+Ideas for template extensibility: factory, registry, metrics, config, tracking.
 Not tied to a specific domain.
 
 Informed by the research project `papers/schrodingers_negative` (reference implementations in `*/factory.py`).
@@ -11,11 +11,11 @@ Informed by the research project `papers/schrodingers_negative` (reference imple
 
 ## Factory + auto-discovery
 
-- [x] **Shared `registry.py` module**  
-  `Registry[T]`, `@registry.register("name1", "name2")`, `autodiscover(package, exclude=...)`.  
+- [x] **Shared `registry.py` module**
+  `Registry[T]`, `@registry.register("name1", "name2")`, `autodiscover(package, exclude=...)`.
   Factories hold no manual dicts — only `registry.get(config_name)` after lazy discover.
 
-- [x] **Convention: new plugin = module + decorator + YAML**  
+- [x] **Convention: new plugin = module + decorator + YAML**
   Add a dataset / model / metric / tracker without editing central factory code:
   - implementation + `@*_registry.register(...)`
   - file in `conf/<group>/<name>.yaml`
@@ -32,11 +32,11 @@ Informed by the research project `papers/schrodingers_negative` (reference imple
   | Metric (final eval) | `eval_metric_registry` | spec: output fields + deps (e.g. threshold tuning) — **out of scope** |
   | Tracking | `tracking_registry` | `@tracking_registry.register("wandb", "w_and_b")` in `tracking/wandb.py` |
 
-- [x] **Config name normalization**  
+- [x] **Config name normalization**
   `strip`, lowercase, `-` → `_`. Skip values: `none`, `null`, `disabled`.
 
-- [x] **`BuildXxxFn` aliases + `Registry[BuildXxxFn]` per layer**  
-  Documents the plugin contract and helps mypy/IDE.  
+- [x] **`BuildXxxFn` aliases + `Registry[BuildXxxFn]` per layer**
+  Documents the plugin contract and helps mypy/IDE.
   The string in `Registry("…")` is an **error label**, not a config name.
 
   | Layer | Alias | Plugin signature | Registry |
@@ -54,7 +54,7 @@ Informed by the research project `papers/schrodingers_negative` (reference imple
 
 ## Metrics
 
-- [x] **Metric phases in config, not one flat list**  
+- [x] **Metric phases in config, not one flat list**
   Separate *when* a metric is computed:
 
   ```yaml
@@ -69,12 +69,12 @@ Informed by the research project `papers/schrodingers_negative` (reference imple
 
   Empty `active` in a phase → nothing computed for that phase.
 
-- [x] **Config decides *what* to compute, not only *how***  
-  Final eval respects `metrics.test.active`.  
+- [x] **Config decides *what* to compute, not only *how***
+  Final eval respects `metrics.test.active`.
   Metric not in config = not computed, not logged.
 
-- [x] **`MetricsManager` computes only — does not log**  
-  `compute(phase, context) -> dict[str, float]`.  
+- [x] **`MetricsManager` computes only — does not log**
+  `compute(phase, context) -> dict[str, float]`.
   `MetricLogger` handles console and trackers.
 
 - [x] **`MetricLogger` — consistent logging moments**
@@ -86,24 +86,24 @@ Informed by the research project `papers/schrodingers_negative` (reference imple
   | Final eval | `epochs+1` | `test/` | `test/f1` |
   | Summary | none | `summary/` | `summary/best_val_loss` |
 
-- [ ] **Eval metric registry with metadata**  
+- [ ] **Eval metric registry with metadata**
   For metrics outside the training loop: spec (output field names, extra steps e.g. threshold tuning).
 
-- [x] **Validation metrics ≠ final test metrics**  
-  During epochs: fast val proxies (loss, accuracy).  
+- [x] **Validation metrics ≠ final test metrics**
+  During epochs: fast val proxies (loss, accuracy).
   After training: full test protocol — different metrics, different prefix, same config-driven selection.
 
 ---
 
 ## Config (Hydra)
 
-- [x] **One YAML file per plugin**  
+- [x] **One YAML file per plugin**
   `conf/data/mnist.yaml`, `conf/model/cnn.yaml`, `conf/metrics/default.yaml`, `conf/loss/default.yaml` — selected via defaults in `train.yaml`.
 
-- [x] **Eval protocol params in dataset config, not a separate “mode” group**  
+- [x] **Eval protocol params in dataset config, not a separate “mode” group**
   Split ratios, seed, batch size — in `conf/data/`.
 
-- [ ] **Per-phase metric config groups**  
+- [ ] **Per-phase metric config groups**
   Settings under each phase:
 
   ```yaml
@@ -120,13 +120,13 @@ Informed by the research project `papers/schrodingers_negative` (reference imple
 
 ## Tracking
 
-- [x] **Composite `TrackingManager`**  
+- [x] **Composite `TrackingManager`**
   `backends: [wandb, tensorboard]` in config — one API, multiple backends.
 
-- [x] **Tracker auto-discovery**  
+- [x] **Tracker auto-discovery**
   `tracking_registry` + decorators in `wandb.py`, `mlflow.py`, `tensorboard.py` — no manual `_BACKEND_MODULES`.
 
-- [x] **Consistent key prefixes**  
+- [x] **Consistent key prefixes**
   `train/`, `val/`, `test/`, `summary/`, `data/` — readable in wandb / tensorboard.
 
 ---
@@ -149,13 +149,13 @@ Items for later — intentionally omitted from README to keep first clone simple
 
 ## DevEx
 
-- [x] **ML-oriented `.gitignore`**  
+- [x] **ML-oriented `.gitignore`**
   `data/`, `outputs/`, `.venv/`, `wandb/`, `mlruns/`, `.hydra/`, checkpoints (`.pt`, `.pth`, …).
 
-- [x] **Pre-commit + ruff**  
+- [x] **Pre-commit + ruff**
   ruff lint/format, yaml — no `conventional-pre-commit` on `commit-msg` yet.
 
-- [x] **README: “Add a plugin in 3 steps”**  
+- [x] **README: “Add a plugin in 3 steps”**
   Decorator → YAML → CLI override.
 
 ---
