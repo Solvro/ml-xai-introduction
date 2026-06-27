@@ -7,9 +7,9 @@ from collections.abc import Sequence
 from omegaconf import DictConfig
 
 from pytorch_research_template.registry import Registry, autodiscover, is_skipped_name, normalize_name
-from pytorch_research_template.tracking.tracking_base import BuildTrackerFn, TrackingBackend, TrackingManager
+from pytorch_research_template.tracking.tracking_base import TrackingBackend, TrackingManager
 
-tracking_registry: Registry[BuildTrackerFn] = Registry("tracking backend")
+tracking_registry: Registry[TrackingBackend] = Registry("tracking backend")
 
 _DISCOVERED = False
 

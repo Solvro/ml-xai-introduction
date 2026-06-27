@@ -31,6 +31,17 @@ jobs:
       - name: Ruff format check
         run: uv run ruff format --check .
 
+      - name: Mypy
+        run: |
+          uv run mypy \
+            src/pytorch_research_template/registry.py \
+            src/pytorch_research_template/metrics \
+            src/pytorch_research_template/models/model_factory.py \
+            src/pytorch_research_template/losses/loss_factory.py \
+            src/pytorch_research_template/data/data_factory.py \
+            src/pytorch_research_template/tracking/tracking_factory.py \
+            src/pytorch_research_template/train.py
+
       - name: Pytest with coverage
         run: uv run pytest -q --cov=src --cov-report=term-missing:skip-covered --cov-fail-under=70
 

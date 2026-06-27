@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from omegaconf import DictConfig
 
-from pytorch_research_template.data.data_base import DataBundle, LoadDataFn
+from pytorch_research_template.data.data_base import DataBundle
 from pytorch_research_template.registry import Registry, autodiscover, normalize_name
 
-dataset_registry: Registry[LoadDataFn] = Registry("dataset")
+dataset_registry: Registry[DataBundle] = Registry("dataset")
 
 _DISCOVERED = False
 

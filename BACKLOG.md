@@ -35,8 +35,8 @@ Informed by the research project `papers/schrodingers_negative` (reference imple
 - [x] **Config name normalization**
   `strip`, lowercase, `-` → `_`. Skip values: `none`, `null`, `disabled`.
 
-- [x] **`BuildXxxFn` aliases + `Registry[BuildXxxFn]` per layer**
-  Documents the plugin contract and helps mypy/IDE.
+- [x] **`BuildXxxFn` aliases + `Registry[T]` per layer**
+  `Registry[T]` stores builders that return `T` (e.g. `Registry[Metric]`, `Registry[Model]`). `BuildXxxFn` documents the builder signature for mypy/IDE.
   The string in `Registry("…")` is an **error label**, not a config name.
 
   | Layer | Alias | Plugin signature | Registry |

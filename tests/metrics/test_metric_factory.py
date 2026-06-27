@@ -23,3 +23,10 @@ def test_metric_registry_lists_registered_names() -> None:
     assert "loss" in names
     assert "accuracy" in names
     assert "f1" in names
+
+
+def test_parse_sklearn_average_rejects_invalid_value() -> None:
+    from pytorch_research_template.metrics.metric_base import parse_sklearn_average
+
+    with pytest.raises(ValueError, match="Invalid average"):
+        parse_sklearn_average("makro")

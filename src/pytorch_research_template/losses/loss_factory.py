@@ -5,10 +5,9 @@ from __future__ import annotations
 import torch.nn as nn
 from omegaconf import DictConfig
 
-from pytorch_research_template.losses.loss_base import BuildLossFn
 from pytorch_research_template.registry import Registry, autodiscover, normalize_name
 
-loss_registry: Registry[BuildLossFn] = Registry("loss")
+loss_registry: Registry[nn.Module] = Registry("loss")
 
 _DISCOVERED = False
 

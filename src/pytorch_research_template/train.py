@@ -10,6 +10,7 @@ import torch
 from dotenv import load_dotenv
 from hydra import compose, initialize_config_dir
 from omegaconf import DictConfig, OmegaConf
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from pytorch_research_template.data.data_factory import load_data
 from pytorch_research_template.metrics.metric_base import RunSummary
@@ -78,7 +79,6 @@ def main() -> None:
             steps_per_epoch=len(train_loader),
         )
         is_per_batch_scheduler = str(cfg.training.scheduler.name).lower() == "onecycle"
-        is_plateau_scheduler = str(cfg.training.scheduler.name).lower() == "reduce_on_plateau"
 
         metric_logger.log_run_start({
             "data/train_batches": len(train_loader),
@@ -111,8 +111,9 @@ def main() -> None:
             val_metrics = metrics_manager.compute("validation", val_ctx)
 
             if scheduler is not None and not is_per_batch_scheduler:
-                if is_plateau_scheduler:
-                    scheduler.step(val_metrics.get("loss", val_ctx.loss_sum / val_ctx.num_samples))
+                if isinstance(scheduler, ReduceLROnPlateau):
+                    val_loss = float(val_metrics.get("loss", val_ctx.loss_sum / val_ctx.num_samples))
+                    scheduler.step(val_loss)
                 else:
                     scheduler.step()
 

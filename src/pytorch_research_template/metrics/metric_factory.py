@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from omegaconf import DictConfig
 
-from pytorch_research_template.metrics.metric_base import BuildMetricFn, Metric
+from pytorch_research_template.metrics.metric_base import Metric
 from pytorch_research_template.registry import Registry, autodiscover, normalize_name
 
-metric_registry: Registry[BuildMetricFn] = Registry("metric")
+metric_registry: Registry[Metric] = Registry("metric")
 
 _DISCOVERED = False
 

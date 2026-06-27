@@ -66,7 +66,7 @@ If you are setting up a lab project, run the bootstrap script once to rename the
 │   └── train.yaml                # Root config
 ├── scripts/
 │   ├── bootstrap_project.py      # Rename template → your project
-│   └── quality_report.py         # Ruff + pytest + coverage summary
+│   └── quality_report.py         # Ruff + mypy + pytest + coverage summary
 ├── src/pytorch_research_template/
 │   ├── data/                     # dataset_registry
 │   ├── models/                   # model_registry
@@ -389,7 +389,7 @@ uv run python scripts/quality_report.py
 uv run python scripts/quality_report.py --full   # includes smoke train
 ```
 
-Prints a summary table: ruff lint, format, pytest, coverage.
+Prints a summary table: ruff lint, format, mypy (registry + train entrypoint), pytest, coverage.
 
 ---
 
@@ -398,6 +398,7 @@ Prints a summary table: ruff lint, format, pytest, coverage.
 [`.github/workflows/python-ci.yml`](.github/workflows/python-ci.yml):
 
 - pre-commit (ruff, yaml)
+- `mypy` on registry, factories, metrics, and `train.py`
 - `pytest` with coverage
 - smoke train `training.epochs=1 logging=default`
 

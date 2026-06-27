@@ -38,6 +38,18 @@ def _package_dir(root: Path) -> Path | None:
     return packages[0] if len(packages) == 1 else None
 
 
+def _mypy_targets(root: Path) -> list[str]:
+    return [
+        str(root / "src/pytorch_research_template/registry.py"),
+        str(root / "src/pytorch_research_template/metrics"),
+        str(root / "src/pytorch_research_template/models/model_factory.py"),
+        str(root / "src/pytorch_research_template/losses/loss_factory.py"),
+        str(root / "src/pytorch_research_template/data/data_factory.py"),
+        str(root / "src/pytorch_research_template/tracking/tracking_factory.py"),
+        str(root / "src/pytorch_research_template/train.py"),
+    ]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run quality checks and print a summary report.")
     parser.add_argument("--full", action="store_true", help="Also run a 1-epoch smoke train.")
@@ -65,6 +77,13 @@ def main() -> int:
     if code != 0:
         failed = True
     lines.append(f"Ruff format   {status}")
+
+    code, out = _run(["uv", "run", "mypy", *_mypy_targets(root)], root)
+    status = "PASS" if code == 0 else "FAIL"
+    if code != 0:
+        failed = True
+    issue_line = out.splitlines()[-1] if out else "ok"
+    lines.append(f"Mypy          {status:<5}  {issue_line}")
 
     code, out = _run(
         ["uv", "run", "pytest", "-q", "--cov=src", "--cov-report=term-missing:skip-covered"],

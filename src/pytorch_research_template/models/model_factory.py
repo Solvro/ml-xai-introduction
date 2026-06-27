@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from omegaconf import DictConfig
 
-from pytorch_research_template.models.model_base import BuildModelFn, Model
+from pytorch_research_template.models.model_base import Model
 from pytorch_research_template.registry import Registry, autodiscover, normalize_name
 
-model_registry: Registry[BuildModelFn] = Registry("model")
+model_registry: Registry[Model] = Registry("model")
 
 _DISCOVERED = False
 

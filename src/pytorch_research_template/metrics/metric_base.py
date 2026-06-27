@@ -4,10 +4,13 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Literal, Protocol, cast
 
 import torch
 from omegaconf import DictConfig
+
+SklearnAverage = Literal["binary", "micro", "macro", "weighted", "samples"]
+ALLOWED_SKLEARN_AVERAGES = frozenset({"binary", "micro", "macro", "weighted", "samples"})
 
 
 @dataclass(frozen=True, slots=True)
@@ -30,3 +33,11 @@ class Metric(Protocol):
 
 
 BuildMetricFn = Callable[[DictConfig], Metric]
+
+
+def parse_sklearn_average(raw: object) -> SklearnAverage:
+    average = str(raw).strip().lower()
+    if average not in ALLOWED_SKLEARN_AVERAGES:
+        allowed = ", ".join(sorted(ALLOWED_SKLEARN_AVERAGES))
+        raise ValueError(f"Invalid average {raw!r}; expected one of: {allowed}")
+    return cast(SklearnAverage, average)
