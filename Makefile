@@ -1,4 +1,4 @@
-PACKAGE ?= ml_xai_introduction
+PACKAGE ?= pytorch_research_template
 TRAIN := src/$(PACKAGE)/train.py
 TRAINING_EPOCHS ?= 10
 ARGS ?=

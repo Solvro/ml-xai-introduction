@@ -11,8 +11,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 DELETE_MARKER = "**DELETE EVERYTHING ABOVE FOR YOUR PROJECT**"
-OLD_PACKAGE = "ml_xai_introduction"
-OLD_KEBAB = "ml-xai-introduction"
+OLD_PACKAGE = "pytorch_research_template"
+OLD_KEBAB = "pytorch-research-template"
 DEFAULT_DESCRIPTION = "Image classification research project"
 DEFAULT_AUTHOR = "Your Team"
 DEFAULT_EMAIL = "team@example.com"

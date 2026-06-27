@@ -26,7 +26,7 @@ def test_bootstrap_dry_run_on_repo() -> None:
     assert result.returncode == 0, result.stderr + result.stdout
     assert "Bootstrap plan:" in result.stdout
     assert "dry-run" in result.stdout
-    assert (root / "src" / "ml_xai_introduction").is_dir()
+    assert (root / "src" / "pytorch_research_template").is_dir()
 
 
 def test_bootstrap_renames_package_in_temp(tmp_path: Path) -> None:
@@ -53,7 +53,7 @@ def test_bootstrap_renames_package_in_temp(tmp_path: Path) -> None:
     )
     assert result.returncode == 0, result.stderr + result.stdout
     assert (dest / "src" / "temp_lab").is_dir()
-    assert not (dest / "src" / "ml_xai_introduction").exists()
+    assert not (dest / "src" / "pytorch_research_template").exists()
     readme = (dest / "README.md").read_text(encoding="utf-8")
     assert "DELETE EVERYTHING ABOVE" not in readme
     assert "temp-lab" in readme

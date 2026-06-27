@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from omegaconf import OmegaConf
 
-from ml_xai_introduction.data.data_factory import load_data
-from ml_xai_introduction.models.model_factory import load_model
-from ml_xai_introduction.registry import Registry, normalize_name
+from pytorch_research_template.data.data_factory import load_data
+from pytorch_research_template.models.model_factory import load_model
+from pytorch_research_template.registry import Registry, normalize_name
 
 
 def test_dataset_registry_builds_mnist_with_minimal_config(monkeypatch, tmp_path) -> None:
-    import ml_xai_introduction.data.mnist as mnist_module
+    import pytorch_research_template.data.mnist as mnist_module
 
     class FakeSubset:
         def __init__(self, size: int) -> None:

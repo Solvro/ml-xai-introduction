@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 
 from omegaconf import OmegaConf
 
-from ml_xai_introduction.tracking import tensorboard as tensorboard_tracker
+from pytorch_research_template.tracking import tensorboard as tensorboard_tracker
 
 
 @dataclass

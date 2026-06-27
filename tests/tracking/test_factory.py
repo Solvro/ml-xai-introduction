@@ -3,8 +3,8 @@ from __future__ import annotations
 import pytest
 from omegaconf import OmegaConf
 
-from ml_xai_introduction.tracking import tracking_factory as factory
-from ml_xai_introduction.tracking.tracking_base import TrackingManager
+from pytorch_research_template.tracking import tracking_factory as factory
+from pytorch_research_template.tracking.tracking_base import TrackingManager
 
 
 class DummyBackend:

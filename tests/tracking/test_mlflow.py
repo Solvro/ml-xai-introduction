@@ -4,7 +4,7 @@ from pathlib import Path
 
 from omegaconf import OmegaConf
 
-from ml_xai_introduction.tracking import mlflow as mlflow_tracker
+from pytorch_research_template.tracking import mlflow as mlflow_tracker
 
 
 class FakeMLflow:
@@ -45,7 +45,7 @@ def test_mlflow_tracker_calls_expected_api(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setattr(mlflow_tracker, "_require_mlflow", lambda: fake_mlflow)
 
     cfg = OmegaConf.create({
-        "project_name": "ml-xai-introduction",
+        "project_name": "pytorch-research-template",
         "experiment_name": "mnist-baseline",
         "mlflow": {"tracking_uri": "file:///tmp/mlruns", "nested": True, "tags": {}},
     })
@@ -59,7 +59,7 @@ def test_mlflow_tracker_calls_expected_api(monkeypatch, tmp_path: Path) -> None:
     tracker.finish()
 
     assert fake_mlflow.tracking_uris == ["file:///tmp/mlruns"]
-    assert fake_mlflow.experiments == ["ml-xai-introduction"]
+    assert fake_mlflow.experiments == ["pytorch-research-template"]
     assert fake_mlflow.runs == [{"run_name": "mnist-baseline", "nested": True}]
     assert fake_mlflow.logged_metrics == [({"accuracy": 0.9}, 4)]
     assert fake_mlflow.logged_params == [{"nested.batch_size": 32, "tags": '["mnist", "baseline"]'}]

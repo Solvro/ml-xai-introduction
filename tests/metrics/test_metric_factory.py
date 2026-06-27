@@ -3,8 +3,8 @@ from __future__ import annotations
 import pytest
 from omegaconf import OmegaConf
 
-from ml_xai_introduction.metrics import metric_factory
-from ml_xai_introduction.metrics.metric_factory import build_metric
+from pytorch_research_template.metrics import metric_factory
+from pytorch_research_template.metrics.metric_factory import build_metric
 
 
 def test_metric_registry_builds_loss() -> None:

@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 from omegaconf import OmegaConf
 
-from ml_xai_introduction.data import data_factory
-from ml_xai_introduction.data.data_base import DataBundle
+from pytorch_research_template.data import data_factory
+from pytorch_research_template.data.data_base import DataBundle
 
 
 def _minimal_cfg(dataset_name: str, tmp_path: Path) -> object:

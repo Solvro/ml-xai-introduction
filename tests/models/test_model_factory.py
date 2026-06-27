@@ -4,7 +4,7 @@ import pytest
 import torch.nn as nn
 from omegaconf import OmegaConf
 
-from ml_xai_introduction.models import model_factory
+from pytorch_research_template.models import model_factory
 
 
 def test_load_model_dispatches_to_registered_builder(monkeypatch) -> None:

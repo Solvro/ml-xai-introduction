@@ -36,6 +36,6 @@ jobs:
 
       - name: Smoke train
         run: |
-          uv run python src/ml_xai_introduction/train.py training.epochs=1 logging=default \
+          uv run python src/pytorch_research_template/train.py training.epochs=1 logging=default \
             paths.output_dir=/tmp/ml-template-smoke-out \
             paths.checkpoint_dir=/tmp/ml-template-smoke-out/checkpoints

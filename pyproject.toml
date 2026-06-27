@@ -1,7 +1,7 @@
 [project]
-name = "ml-xai-introduction"
+name = "pytorch-research-template"
 version = "0.1.0"
-description = "Hydra + registry ML template for classification research"
+description = "Config-driven PyTorch research template with plugin registry"
 readme = "README.md"
 authors = [
     { name = "Marcel Musiałek", email = "mnem12321@gmail.com" },
@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.scripts]
-ml-xai-introduction = "ml_xai_introduction.train:main"
+pytorch-research-template = "pytorch_research_template.train:main"
 
 [build-system]
 requires = ["uv_build>=0.8.15,<0.9.0"]

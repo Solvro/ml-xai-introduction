@@ -4,7 +4,7 @@ import pytest
 import torch.nn as nn
 from omegaconf import OmegaConf
 
-from ml_xai_introduction.losses import loss_factory
+from pytorch_research_template.losses import loss_factory
 
 
 def test_load_loss_dispatches_to_registered_builder(monkeypatch) -> None:

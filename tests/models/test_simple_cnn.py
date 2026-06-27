@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from omegaconf import OmegaConf
 
-from ml_xai_introduction.models.model_factory import load_model
+from pytorch_research_template.models.model_factory import load_model
 
 
 def test_model_registry_builds_simple_cnn() -> None:

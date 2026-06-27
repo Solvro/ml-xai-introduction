@@ -7,9 +7,9 @@ import torch
 import torch.nn as nn
 from omegaconf import OmegaConf
 
-from ml_xai_introduction import train as train_module
-from ml_xai_introduction.data.data_base import DataBundle
-from ml_xai_introduction.metrics.metric_base import MetricContext
+from pytorch_research_template import train as train_module
+from pytorch_research_template.data.data_base import DataBundle
+from pytorch_research_template.metrics.metric_base import MetricContext
 
 
 @dataclass

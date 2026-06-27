@@ -3,9 +3,9 @@ from __future__ import annotations
 import torch
 from omegaconf import OmegaConf
 
-from ml_xai_introduction.metrics.metric_base import MetricContext
-from ml_xai_introduction.metrics.metric_factory import build_metric
-from ml_xai_introduction.metrics.metric_manager import MetricsManager
+from pytorch_research_template.metrics.metric_base import MetricContext
+from pytorch_research_template.metrics.metric_factory import build_metric
+from pytorch_research_template.metrics.metric_manager import MetricsManager
 
 
 def _context() -> MetricContext:

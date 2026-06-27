@@ -1,10 +1,10 @@
 <div align="center">
 
-# ML Classifier Template
+# PyTorch Research Template
 
-[![Python Code Quality](https://github.com/Solvro/ml-xai-introduction/actions/workflows/python-ci.yml/badge.svg)](https://github.com/Solvro/ml-xai-introduction/actions/workflows/python-ci.yml)
+[![Python Code Quality](https://github.com/Solvro/PyTorch-Research-Template/actions/workflows/python-ci.yml/badge.svg)](https://github.com/Solvro/PyTorch-Research-Template/actions/workflows/python-ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Solvro/ml-xai-introduction/pulls)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Solvro/PyTorch-Research-Template/pulls)
 
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.7+-EE4C2C?logo=pytorch&logoColor=white)
@@ -12,7 +12,7 @@
 ![Ruff](https://img.shields.io/badge/Code_Style-Ruff-261230)
 ![uv](https://img.shields.io/badge/Env-uv-DE5FE9)
 
-Hydra + registry template for image classification experiments.
+Config-driven PyTorch research template with plugin registry for experiments.
 Clone, rename with `bootstrap_project.py`, add a model, run training.
 
 *Pull requests and issues are welcome.*
@@ -67,7 +67,7 @@ If you are setting up a lab project, run the bootstrap script once to rename the
 ├── scripts/
 │   ├── bootstrap_project.py      # Rename template → your project
 │   └── quality_report.py         # Ruff + pytest + coverage summary
-├── src/ml_xai_introduction/
+├── src/pytorch_research_template/
 │   ├── data/                     # dataset_registry
 │   ├── models/                   # model_registry
 │   ├── losses/                   # loss_registry
@@ -91,8 +91,8 @@ If you are setting up a lab project, run the bootstrap script once to rename the
 
 ```bash
 # clone
-git clone https://github.com/Solvro/ml-xai-introduction
-cd ml-xai-introduction
+git clone https://github.com/Solvro/PyTorch-Research-Template
+cd PyTorch-Research-Template
 
 # install
 uv sync
@@ -133,7 +133,7 @@ uv run python scripts/bootstrap_project.py \
 
 **What happens automatically** (no extra step):
 
-- Renames `src/ml_xai_introduction/` → `src/my_lab_cnn/`
+- Renames `src/pytorch_research_template/` → `src/my_lab_cnn/`
 - Updates imports, `pyproject.toml`, logging `project_name`, README stub
 - **Keeps** `LICENSE` (MIT requirement when redistributing source)
 - **Removes** `CITATION.cff` (template citation no longer applies)
@@ -157,14 +157,14 @@ Typical overrides — expand a section to see commands.
 <summary>Override config parameters</summary>
 
 ```bash
-uv run python src/ml_xai_introduction/train.py training.epochs=20 training.optimizer.lr=3e-4
-uv run python src/ml_xai_introduction/train.py data=fashion_mnist model=baseline
+uv run python src/pytorch_research_template/train.py training.epochs=20 training.optimizer.lr=3e-4
+uv run python src/pytorch_research_template/train.py data=fashion_mnist model=baseline
 ```
 
 Add a new key with `+`:
 
 ```bash
-uv run python src/ml_xai_introduction/train.py +logging.wandb.tags=[baseline,mnist]
+uv run python src/pytorch_research_template/train.py +logging.wandb.tags=[baseline,mnist]
 ```
 
 </details>
@@ -173,8 +173,8 @@ uv run python src/ml_xai_introduction/train.py +logging.wandb.tags=[baseline,mni
 <summary>Switch model, dataset, or loss</summary>
 
 ```bash
-uv run python src/ml_xai_introduction/train.py model=simple_cnn data=emnist
-uv run python src/ml_xai_introduction/train.py model=residual_cnn loss=default
+uv run python src/pytorch_research_template/train.py model=simple_cnn data=emnist
+uv run python src/pytorch_research_template/train.py model=residual_cnn loss=default
 ```
 
 Each plugin: `@*_registry.register("name")` + `conf/<group>/<name>.yaml`.
@@ -185,7 +185,7 @@ Each plugin: `@*_registry.register("name")` + `conf/<group>/<name>.yaml`.
 <summary>Metrics per phase</summary>
 
 ```bash
-uv run python src/ml_xai_introduction/train.py \
+uv run python src/pytorch_research_template/train.py \
   metrics.validation.active=[loss,accuracy] \
   metrics.test.active=[loss,accuracy,f1]
 ```
@@ -200,9 +200,9 @@ Empty `active: []` skips computation for that phase.
 Copy `.env.example` → `.env` and set `WANDB_API_KEY`.
 
 ```bash
-uv run python src/ml_xai_introduction/train.py logging=wandb
-uv run python src/ml_xai_introduction/train.py logging=tensorboard
-uv run python src/ml_xai_introduction/train.py logging.backends=[wandb,tensorboard]
+uv run python src/pytorch_research_template/train.py logging=wandb
+uv run python src/pytorch_research_template/train.py logging=tensorboard
+uv run python src/pytorch_research_template/train.py logging.backends=[wandb,tensorboard]
 ```
 
 Logged keys: `train/*`, `val/*`, `test/*`, `summary/*`, `data/*`.
@@ -213,9 +213,9 @@ Logged keys: `train/*`, `val/*`, `test/*`, `summary/*`, `data/*`.
 <summary>Early stopping and schedulers</summary>
 
 ```bash
-uv run python src/ml_xai_introduction/train.py training.early_stopping.enabled=true training.early_stopping.monitor=loss
-uv run python src/ml_xai_introduction/train.py training.scheduler.name=step
-uv run python src/ml_xai_introduction/train.py training.scheduler.name=reduce_on_plateau
+uv run python src/pytorch_research_template/train.py training.early_stopping.enabled=true training.early_stopping.monitor=loss
+uv run python src/pytorch_research_template/train.py training.scheduler.name=step
+uv run python src/pytorch_research_template/train.py training.scheduler.name=reduce_on_plateau
 ```
 
 </details>
@@ -226,7 +226,7 @@ uv run python src/ml_xai_introduction/train.py training.scheduler.name=reduce_on
 `.pth` is always written after training. ONNX when enabled:
 
 ```bash
-uv run python src/ml_xai_introduction/train.py training.export.onnx=true
+uv run python src/pytorch_research_template/train.py training.export.onnx=true
 ```
 
 </details>
@@ -262,7 +262,7 @@ flowchart LR
     trackReg --> tracker
 ```
 
-[`train.py`](src/ml_xai_introduction/train.py) orchestrates: load config → tracker → data → model → loss → epoch loop → test → export.
+[`train.py`](src/pytorch_research_template/train.py) orchestrates: load config → tracker → data → model → loss → epoch loop → test → export.
 
 `MetricsManager` never talks to wandb. `MetricLogger` never computes metrics.
 
@@ -296,9 +296,9 @@ checkpoint_dir: ${paths.output_dir}/checkpoints
 
 ## Workflow
 
-1. Write a model in `src/ml_xai_introduction/models/my_model.py` with `@model_registry.register("my_model")`.
+1. Write a model in `src/pytorch_research_template/models/my_model.py` with `@model_registry.register("my_model")`.
 2. Add `conf/model/my_model.yaml` with `name: my_model`.
-3. Run: `uv run python src/ml_xai_introduction/train.py model=my_model`.
+3. Run: `uv run python src/pytorch_research_template/train.py model=my_model`.
 4. Check `outputs/` and your tracker dashboard.
 
 **Do not edit** `train.py` or factory files for a new classifier.
@@ -313,7 +313,7 @@ checkpoint_dir: ${paths.output_dir}/checkpoints
 - Read `num_classes` from `cfg.data.num_classes`.
 - Input shape: `(B, C, H, W)` — MNIST plugins use `C=1`, `28×28`.
 
-**Minimal example** (copy from [`models/cnn.py`](src/ml_xai_introduction/models/cnn.py)):
+**Minimal example** (copy from [`models/cnn.py`](src/pytorch_research_template/models/cnn.py)):
 
 ```python
 @model_registry.register("my_cnn")
@@ -423,7 +423,7 @@ If this codebase helped your research, we'd appreciate a mention — **it is not
 
 **Minimal footnote example:**
 
-> Classification pipeline based on the [ML Classifier Template](https://github.com/Solvro/ml-xai-introduction).
+> Classification pipeline based on the [PyTorch Research Template](https://github.com/Solvro/PyTorch-Research-Template).
 
 Use [`CITATION.cff`](CITATION.cff) for BibTeX / GitHub "Cite this repository".
 

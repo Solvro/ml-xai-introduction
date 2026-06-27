@@ -6,7 +6,7 @@ from types import SimpleNamespace
 import torch
 from torch.utils.data import Dataset
 
-from ml_xai_introduction.data import mnist
+from pytorch_research_template.data import mnist
 
 
 class TinyDataset(Dataset):

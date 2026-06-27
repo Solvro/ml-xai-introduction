@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ml_xai_introduction.tracking.tracking_base import TrackingManager
+from pytorch_research_template.tracking.tracking_base import TrackingManager
 
 
 class DummyBackend:

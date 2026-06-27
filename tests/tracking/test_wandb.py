@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 from omegaconf import OmegaConf
 
-from ml_xai_introduction.tracking import wandb as wandb_tracker
+from pytorch_research_template.tracking import wandb as wandb_tracker
 
 
 class FakeWandbRun:
@@ -45,7 +45,7 @@ def test_wandb_tracker_calls_expected_api(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setattr(wandb_tracker, "_require_wandb", lambda: fake_wandb)
 
     cfg = OmegaConf.create({
-        "project_name": "ml-xai-introduction",
+        "project_name": "pytorch-research-template",
         "experiment_name": "mnist-baseline",
         "wandb": {"mode": "offline", "entity": "demo", "tags": ["mnist"], "notes": "note"},
     })

@@ -1,4 +1,4 @@
-project_name: "ml-classifier-template"
+project_name: "pytorch-research-template"
 experiment_name: "default"
 backends:
   - tensorboard

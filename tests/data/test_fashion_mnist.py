@@ -5,7 +5,7 @@ from pathlib import Path
 import torch
 from torch.utils.data import Dataset
 
-from ml_xai_introduction.data import fashion_mnist
+from pytorch_research_template.data import fashion_mnist
 
 
 class TinyDataset(Dataset):

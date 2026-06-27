@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 
 from omegaconf import OmegaConf
 
-from ml_xai_introduction.metrics.metric_logger import MetricLogger
+from pytorch_research_template.metrics.metric_logger import MetricLogger
 
 
 @dataclass
