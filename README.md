@@ -13,11 +13,58 @@
 ![uv](https://img.shields.io/badge/Env-uv-DE5FE9)
 
 Config-driven PyTorch research template with plugin registry for experiments.
-Clone, rename with `bootstrap_project.py`, add a model, run training.
 
 *Pull requests and issues are welcome.*
 
 </div>
+
+---
+
+## Get started
+
+Pick **one** path — both run the same [`bootstrap_project.py`](scripts/bootstrap_project.py) and give you the same project layout.
+
+<div align="center">
+
+[![Use this template](https://img.shields.io/badge/Use_this_template-2ea44f?style=for-the-badge&logo=github)](https://github.com/Solvro/PyTorch-Research-Template/generate)
+
+**or**
+
+**clone this repo** and bootstrap locally → [Option B](#option-b-clone--bootstrap-locally)
+
+</div>
+
+### Option A: Use this template (GitHub)
+
+Best for a new lab repo on GitHub (clean history, no manual rename on your machine first).
+
+1. Click **Use this template** above → create your repository.
+2. In the new repo: **Actions → Bootstrap project → Run workflow**
+   (leave *Project name* empty to use the repository name).
+3. Locally: `git clone <your-repo-url> && cd <your-repo> && git pull && uv sync`
+4. Smoke train: `make train TRAINING_EPOCHS=1`
+
+GitHub cannot run bootstrap at template creation — the Actions workflow is one extra click after step 1.
+
+### Option B: Clone & bootstrap locally
+
+Best if you already work from a local clone or want full control in the terminal.
+
+```bash
+git clone https://github.com/Solvro/PyTorch-Research-Template
+cd PyTorch-Research-Template
+uv sync
+
+# rebrand once (interactive prompts)
+uv run python scripts/bootstrap_project.py
+
+# smoke train (offline, 1 epoch)
+make train TRAINING_EPOCHS=1
+```
+
+Or pass flags directly — see [Bootstrap details](#bootstrap-details) below.
+
+Default run trains MNIST + CNN for 10 epochs with no external loggers.
 
 ---
 
@@ -27,7 +74,7 @@ This repo is a practical base for training classifiers on small image datasets. 
 
 The examples ship with MNIST, Fashion-MNIST, and EMNIST. The same layout should work for your own dataset and model: one Python file, one config file, one CLI flag.
 
-If you are setting up a lab project, run the bootstrap script once to rename the package and trim this README. After that, your work is mostly under `models/` and `conf/model/`.
+If you are setting up a lab project, bootstrap once (either path above) to rename the package and trim this README. After that, your work is mostly under `models/` and `conf/model/`.
 
 ---
 
@@ -87,35 +134,13 @@ If you are setting up a lab project, run the bootstrap script once to rename the
 
 ---
 
-## Quickstart
+## Bootstrap details
 
-```bash
-# clone
-git clone https://github.com/Solvro/PyTorch-Research-Template
-cd PyTorch-Research-Template
+Same result for [Option A](#option-a-use-this-template-github) and [Option B](#option-b-clone--bootstrap-locally). Rebrand the template once.
 
-# install
-uv sync
+**On GitHub (Option A):** Actions → **Bootstrap project** → Run workflow. Optional: project name, author, email, description. Empty project name → repository name.
 
-# optional: rename for your lab/project
-uv run python scripts/bootstrap_project.py
-
-# smoke train (offline, 1 epoch)
-make train TRAINING_EPOCHS=1
-
-# full quality check
-make quality
-```
-
-Default run trains MNIST + CNN for 10 epochs with no external loggers.
-
----
-
-## Bootstrap Your Project
-
-After clone, external groups should rebrand the template once.
-
-**Interactive** (prompts for anything you omit):
+**Locally (Option B) — interactive:**
 
 ```bash
 uv run python scripts/bootstrap_project.py
