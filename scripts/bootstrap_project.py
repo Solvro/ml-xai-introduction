@@ -54,6 +54,35 @@ def to_kebab(name: str) -> str:
     return to_snake(name).replace("_", "-")
 
 
+def stdin_has_input() -> bool:
+    """True for an interactive terminal or piped stdin with unread bytes."""
+    if sys.stdin.isatty():
+        return True
+    buffer = getattr(sys.stdin, "buffer", None)
+    if buffer is None:
+        return False
+    try:
+        return bool(buffer.peek(1))
+    except (OSError, ValueError, AttributeError):
+        return False
+
+
+def should_prompt(args: argparse.Namespace) -> bool:
+    if getattr(args, "interactive", False):
+        return args.name is None
+    if args.name is not None:
+        return False
+    return stdin_has_input()
+
+
+def should_confirm(args: argparse.Namespace, *, prompted: bool) -> bool:
+    if args.yes or args.dry_run:
+        return False
+    if sys.stdin.isatty() or prompted:
+        return True
+    return False
+
+
 def prompt_value(label: str, default: str | None = None, required: bool = False) -> str:
     if default:
         raw = input(f"{label} [{default}]: ").strip()
@@ -67,48 +96,51 @@ def prompt_value(label: str, default: str | None = None, required: bool = False)
         print("  This field is required.")
 
 
-def resolve_config(args: argparse.Namespace) -> BootstrapConfig:
-    interactive = sys.stdin.isatty()
+def resolve_config(args: argparse.Namespace) -> tuple[BootstrapConfig, bool]:
+    prompt = should_prompt(args)
 
     if args.name:
         name = args.name
-    elif interactive:
+    elif prompt:
         name = prompt_value("Project name (kebab-case or snake_case)", required=True)
     else:
-        raise ValueError("--name is required when stdin is not interactive")
+        raise ValueError("--name is required in non-interactive mode (or pipe answers to stdin)")
 
     if args.author is not None:
         author = args.author
-    elif interactive:
+    elif prompt:
         author = prompt_value("Author", default=DEFAULT_AUTHOR)
     else:
         author = DEFAULT_AUTHOR
 
     if args.email is not None:
         email = args.email
-    elif interactive:
+    elif prompt:
         email = prompt_value("Email", default=DEFAULT_EMAIL)
     else:
         email = DEFAULT_EMAIL
 
     if args.description is not None:
         description = args.description
-    elif interactive:
+    elif prompt:
         description = prompt_value("Description", default=DEFAULT_DESCRIPTION)
     else:
         description = DEFAULT_DESCRIPTION
 
     attribution = args.attribution_line
-    if attribution is None and interactive:
+    if attribution is None and prompt:
         raw = prompt_value("Attribution line in README (optional, Enter to skip)", default="")
         attribution = raw or None
 
-    return BootstrapConfig(
-        name=name,
-        author=author,
-        email=email,
-        description=description,
-        attribution_line=attribution,
+    return (
+        BootstrapConfig(
+            name=name,
+            author=author,
+            email=email,
+            description=description,
+            attribution_line=attribution,
+        ),
+        prompt,
     )
 
 
@@ -125,7 +157,10 @@ def print_plan(config: BootstrapConfig, dry_run: bool) -> None:
 
 
 def confirm_proceed() -> bool:
-    answer = input("\nProceed? [y/N] ").strip().lower()
+    try:
+        answer = input("\nProceed? [y/N] ").strip().lower()
+    except EOFError:
+        return False
     return answer in {"y", "yes"}
 
 
@@ -258,6 +293,11 @@ def main() -> int:
     )
     parser.add_argument("--attribution-line", default=None, help="Optional HTML comment in README stub")
     parser.add_argument("--dry-run", action="store_true", help="Show plan without writing files")
+    parser.add_argument(
+        "--interactive",
+        action="store_true",
+        help="Prompt for missing values even when stdin is not a TTY (e.g. piped input)",
+    )
     parser.add_argument("--yes", action="store_true", help="Skip final confirmation prompt")
     parser.add_argument("--force", action="store_true", help="Run even if git working tree is dirty")
     args = parser.parse_args()
@@ -265,7 +305,7 @@ def main() -> int:
     root = find_project_root()
 
     try:
-        config = resolve_config(args)
+        config, prompted = resolve_config(args)
     except ValueError as exc:
         print(exc, file=sys.stderr)
         return 1
@@ -279,6 +319,9 @@ def main() -> int:
         return 1
 
     print_plan(config, args.dry_run)
+    if not args.dry_run and not args.yes and not should_confirm(args, prompted=prompted):
+        print("Pass --yes in non-interactive mode.", file=sys.stderr)
+        return 1
     if not args.dry_run and not args.yes and not confirm_proceed():
         print("Aborted.")
         return 1
