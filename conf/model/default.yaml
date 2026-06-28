@@ -1,3 +1,0 @@
-name: baseline
-num_classes: 10
-input_shape: [1, 28, 28]
