@@ -6,7 +6,7 @@ from types import SimpleNamespace
 import torch
 from torch.utils.data import Dataset
 
-from pytorch_research_template.data import mnist
+from pytorch_research_template.data import data_base, mnist
 
 
 class TinyDataset(Dataset):
@@ -32,11 +32,25 @@ def test_mnist_presence_detection(tmp_mnist_root: Path) -> None:
     for file_name in mnist.MNIST_RAW_FILES:
         (raw_dir / file_name).write_text("ok")
 
-    assert mnist._mnist_is_present(tmp_mnist_root) is True
+    calls: list = []
+
+    class FakeMNISTDownloader:
+        def __init__(self, root, train, download):
+            calls.append((root, train, download))
+
+    data_base.ensure_dataset_available(tmp_mnist_root, "MNIST", FakeMNISTDownloader, mnist.MNIST_RAW_FILES, "MNIST")
+    assert calls == [], "should not download when files are already present"
 
 
 def test_mnist_presence_detection_false_when_missing(tmp_mnist_root: Path) -> None:
-    assert mnist._mnist_is_present(tmp_mnist_root) is False
+    calls: list = []
+
+    class FakeMNISTDownloader:
+        def __init__(self, root, train, download):
+            calls.append((root, train, download))
+
+    data_base.ensure_dataset_available(tmp_mnist_root, "MNIST", FakeMNISTDownloader, mnist.MNIST_RAW_FILES, "MNIST")
+    assert calls == [(tmp_mnist_root, True, True)], "should download when files are missing"
 
 
 def test_mnist_ensure_downloads_when_missing(monkeypatch, tmp_mnist_root: Path) -> None:

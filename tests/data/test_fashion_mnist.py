@@ -36,19 +36,34 @@ def test_fashion_mnist_presence_detection(tmp_fashion_mnist_root: Path) -> None:
     for file_name in fashion_mnist.FASHION_MNIST_RAW_FILES:
         (raw_dir / file_name).write_text("ok")
 
-    assert fashion_mnist._is_present(tmp_fashion_mnist_root) is True
+    calls: list = []
+
+    class FakeFashionMNISTDownloader:
+        def __init__(self, root, train, download):
+            calls.append((root, train, download))
+
+    from pytorch_research_template.data import data_base
+
+    data_base.ensure_dataset_available(
+        tmp_fashion_mnist_root,
+        "FashionMNIST",
+        FakeFashionMNISTDownloader,
+        fashion_mnist.FASHION_MNIST_RAW_FILES,
+        "FashionMNIST",
+    )
+    assert calls == [], "should not download when files are already present"
 
 
 def test_fashion_mnist_ensure_downloads_when_missing(monkeypatch, tmp_fashion_mnist_root: Path) -> None:
     calls: list[tuple[Path, bool, bool]] = []
 
-    def fake_fashion_mnist(root: str | Path, train: bool, download: bool, transform=None):
-        calls.append((Path(root), train, download))
-        return object()
+    class FakeFashionMNISTDownloader:
+        def __init__(self, root, train, download):
+            calls.append((Path(root), train, download))
 
-    monkeypatch.setattr(fashion_mnist.datasets, "FashionMNIST", fake_fashion_mnist)
+    monkeypatch.setattr(fashion_mnist.datasets, "FashionMNIST", FakeFashionMNISTDownloader)
 
-    fashion_mnist._ensure_available(tmp_fashion_mnist_root)
+    fashion_mnist._ensure_fashion_mnist_available(tmp_fashion_mnist_root)
 
     assert calls == [(tmp_fashion_mnist_root, True, True)]
 

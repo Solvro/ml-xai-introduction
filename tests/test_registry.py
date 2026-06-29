@@ -8,6 +8,7 @@ from pytorch_research_template.registry import Registry, normalize_name
 
 
 def test_dataset_registry_builds_mnist_with_minimal_config(monkeypatch, tmp_path) -> None:
+    import pytorch_research_template.data.data_base as data_base_module
     import pytorch_research_template.data.mnist as mnist_module
 
     class FakeSubset:
@@ -19,8 +20,8 @@ def test_dataset_registry_builds_mnist_with_minimal_config(monkeypatch, tmp_path
 
     monkeypatch.setattr(mnist_module, "_ensure_mnist_available", lambda root: None)
     monkeypatch.setattr(
-        mnist_module,
-        "_split_train_val",
+        data_base_module,
+        "split_train_val",
         lambda train_dataset, val_size, generator: (FakeSubset(8), FakeSubset(val_size)),
     )
     monkeypatch.setattr(
