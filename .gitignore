@@ -1,3 +1,13 @@
+outputs/*
+/data/
+wandb/
+mlruns/
+.hydra/
+*.pt
+*.ckpt
+*.pth
+*.onnx
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,0 +1,13 @@
+train:
+  active: [loss]
+validation:
+  active: [loss, accuracy]
+test:
+  active: [loss, accuracy, f1, precision, recall]
+
+f1:
+  average: macro
+precision:
+  average: macro
+recall:
+  average: macro

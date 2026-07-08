@@ -1,16 +1,24 @@
 [project]
-name = "ml-xai-introduction"
+name = "pytorch-research-template"
 version = "0.1.0"
-description = "Add your description here"
+description = "Config-driven PyTorch research template with plugin registry"
 readme = "README.md"
 authors = [
-    { name = "marcelele-0", email = "mnem12321@gmail.com" }
+    { name = "Marcel Musiałek", email = "mnem12321@gmail.com" },
+    { name = "Iga Wolanin", email = "igatwolanin@gmail.com" },
+    { name = "Damian Ryczko", email = "damianryczko2003@gmail.com" },
 ]
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "hydra-core>=1.3.2,<1.4.0",
+    "python-dotenv>=1.0.0",
+    "scikit-learn>=1.5.0",
+    "torch>=2.7.0",
+    "torchvision>=0.22.0",
+]
 
 [project.scripts]
-ml-xai-introduction = "ml_xai_introduction:main"
+train = "pytorch_research_template.train:main"
 
 [build-system]
 requires = ["uv_build>=0.8.15,<0.9.0"]
@@ -19,10 +27,14 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "black>=26.3.1",
+    "pytest-cov>=6.0.0",
     "ruff>=0.12.0",
     "mypy>=2.1.0",
     "pytest>=9.0.3",
     "pre-commit>=4.0.0",
+    "wandb>=0.16.0",
+    "onnx>=1.17.0",
+    "onnxscript>=0.2.0",
 ]
 
 [tool.ruff]
@@ -32,3 +44,25 @@ preview = true
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "UP", "B", "ANN"]
 ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["ANN"]
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["src"]
+
+[tool.mypy]
+python_version = "3.11"
+mypy_path = "src"
+explicit_package_bases = true
+warn_return_any = true
+warn_unused_configs = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = ["sklearn.*"]
+ignore_missing_imports = true

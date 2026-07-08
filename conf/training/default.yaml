@@ -1,0 +1,29 @@
+epochs: 10
+seed: 42
+batch_size: 128
+shuffle: true
+
+optimizer:
+  name: adam
+  lr: 1e-3
+  weight_decay: 1e-4
+  momentum: 0.9
+
+scheduler:
+  name: none
+  step_size: 10
+  gamma: 0.1
+  T_max: 20
+  eta_min: 0.0
+  factor: 0.5
+  plateau_patience: 3
+  max_lr: 1e-2
+
+early_stopping:
+  enabled: true
+  patience: 5
+  min_delta: 1e-3
+  monitor: loss
+
+export:
+  onnx: false
