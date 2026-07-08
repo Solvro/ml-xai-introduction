@@ -1,0 +1,8 @@
+name: mnist
+num_classes: 10
+val_size: 10000
+root: ${paths.data_dir}/mnist
+download: true
+normalize: true
+num_workers: 0
+pin_memory: false

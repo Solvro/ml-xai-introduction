@@ -1,0 +1,93 @@
+name: Bootstrap project
+
+# Runs bootstrap in GitHub Actions after "Use this template" (manual trigger).
+# GitHub does not support post-create hooks for template repos.
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_name:
+        description: "Project name (kebab-case or snake_case). Empty = repo name."
+        required: false
+        type: string
+      author:
+        description: "Author name"
+        required: false
+        default: "Your Team"
+        type: string
+      email:
+        description: "Author email"
+        required: false
+        default: "team@example.com"
+        type: string
+      description:
+        description: "Short project description"
+        required: false
+        default: "Image classification research project"
+        type: string
+      attribution_line:
+        description: "Optional README attribution (template credit)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.1.0
+        with:
+          python-version: "3.11"
+          enable-cache: true
+
+      - name: Sync dependencies
+        run: uv sync --all-groups
+
+      - name: Verify template not yet bootstrapped
+        run: |
+          if [ ! -d src/pytorch_research_template ]; then
+            echo "::error::Bootstrap skipped: src/pytorch_research_template not found (already bootstrapped?)."
+            exit 1
+          fi
+
+      - name: Resolve project name
+        id: meta
+        run: |
+          name="${{ inputs.project_name }}"
+          if [ -z "$name" ]; then
+            name="${{ github.event.repository.name }}"
+          fi
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+
+      - name: Run bootstrap
+        run: |
+          args=(
+            --name "${{ steps.meta.outputs.name }}"
+            --author "${{ inputs.author }}"
+            --email "${{ inputs.email }}"
+            --description "${{ inputs.description }}"
+            --yes
+            --force
+          )
+          if [ -n "${{ inputs.attribution_line }}" ]; then
+            args+=(--attribution-line "${{ inputs.attribution_line }}")
+          fi
+          uv run python scripts/bootstrap_project.py "${args[@]}"
+
+      - name: Commit and push bootstrap changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: bootstrap project as ${{ steps.meta.outputs.name }}"
+          git push

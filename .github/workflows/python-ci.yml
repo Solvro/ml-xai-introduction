@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - develop
 
 jobs:
   lint-and-test:
@@ -15,7 +16,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v8.1.0
         with:
-          python-version: '3.11'
+          python-version: "3.11"
           enable-cache: true
 
       - name: Sync dependencies
@@ -23,3 +24,29 @@ jobs:
 
       - name: Run pre-commit hooks
         run: uv run pre-commit run --all-files
+
+      - name: Ruff check
+        run: uv run ruff check .
+
+      - name: Ruff format check
+        run: uv run ruff format --check .
+
+      - name: Mypy
+        run: |
+          uv run mypy \
+            src/pytorch_research_template/registry.py \
+            src/pytorch_research_template/metrics \
+            src/pytorch_research_template/models/model_factory.py \
+            src/pytorch_research_template/losses/loss_factory.py \
+            src/pytorch_research_template/data/data_factory.py \
+            src/pytorch_research_template/tracking/tracking_factory.py \
+            src/pytorch_research_template/train.py
+
+      - name: Pytest with coverage
+        run: uv run pytest -q --cov=src --cov-report=term-missing:skip-covered --cov-fail-under=70
+
+      - name: Smoke train
+        run: |
+          uv run python src/pytorch_research_template/train.py training.epochs=1 logging=default \
+            paths.output_dir=/tmp/ml-template-smoke-out \
+            paths.checkpoint_dir=/tmp/ml-template-smoke-out/checkpoints

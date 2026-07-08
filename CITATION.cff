@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+title: "PyTorch Research Template"
+message: "If you use this template in your research, please consider citing it as below."
+type: software
+authors:
+  - family-names: Musiałek
+    given-names: Marcel
+  - family-names: Wolanin
+    given-names: Iga
+  - family-names: Ryczko
+    given-names: Damian
+repository-code: "https://github.com/Solvro/PyTorch-Research-Template"
+url: "https://github.com/Solvro/PyTorch-Research-Template"
+license: MIT
+version: 0.1.0
